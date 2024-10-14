@@ -1,3 +1,21 @@
+# MY ALLOC
+
+## Project Tree:
+
+```
+├── inc
+│   └── libmemalloc.h
+├── src
+│   └── libmemalloc.c
+├── test
+│   └── unit_test.c
+├── .gitattributes
+├── .gitignore
+├── LICENSE
+├── README.md
+└── makefile
+```
+
 # Memory Allocator Algorithms Overview
 
 This document provides a detailed explanation of the algorithms employed in the custom memory allocator module. Understanding these algorithms is crucial for appreciating how the allocator manages memory efficiently, minimizes fragmentation, and optimizes performance.
