@@ -1,5 +1,7 @@
 # MY ALLOC
 
+This module provides functionalities for custom memory allocation, including multiple allocation strategies (First-Fit, Next-Fit, Best-Fit), architecture-specific memory alignment, and debugging support.
+
 ## Project Tree:
 
 ```
