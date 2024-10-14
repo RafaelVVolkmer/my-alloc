@@ -16,6 +16,11 @@ This module provides functionalities for custom memory allocation, including mul
 ├── /test
 │   └── unit_test.c
 │
+├── /bin
+│   ├── libmemalloc.o
+│   ├── libmemalloc.a
+│   └── libmemalloc.so
+│
 ├── .gitattributes
 ├── .gitignore
 ├── LICENSE
