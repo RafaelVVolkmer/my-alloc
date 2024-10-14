@@ -5,12 +5,17 @@ This module provides functionalities for custom memory allocation, including mul
 ## Project Tree:
 
 ```
-├── inc
+/my-alloc
+│
+├── /inc
 │   └── libmemalloc.h
-├── src
+│
+├── /src
 │   └── libmemalloc.c
-├── test
+│
+├── /test
 │   └── unit_test.c
+│
 ├── .gitattributes
 ├── .gitignore
 ├── LICENSE
