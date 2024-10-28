@@ -76,7 +76,10 @@ static uint8_t heap_memory[HEAP_SIZE] __attribute__((section(".heap"), aligned(A
  */
 void MEM_printd(const char *format, ...) 
 {
+    /* Definition of Function Variables */
     va_list args;
+
+    /* Start Function Logic */
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
@@ -97,20 +100,24 @@ void MEM_printd(const char *format, ...)
  */
 int MEM_allocatorInit(mem_allocator_t *allocator) 
 {
+    /* Definition of Function Variables */
     int ret                         = 0u;
 
     block_header_t *initial_block   = NULL;
-
+    
+    /* Check deference/argument boundaries */
     if (allocator == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
+    
+    /* Assigning Initial Values for Variables */
     memset(heap_memory, 0, HEAP_SIZE);
 
     initial_block               = (block_header_t *)(heap_memory);
 
+    /* Start Function Logic */
     initial_block->size         = HEAP_SIZE;
     initial_block->free         = 1u;
     initial_block->next         = NULL;
@@ -123,6 +130,7 @@ int MEM_allocatorInit(mem_allocator_t *allocator)
     allocator->heap             = heap_memory;
     allocator->last_allocated   = initial_block;
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -144,18 +152,22 @@ end_of_function:
  */
 int MEM_findFirstFit(mem_allocator_t *allocator, size_t size, block_header_t **fit_block) 
 {
+    /* Definition of Function Variables */
     int ret = 0u;
 
     block_header_t *current = NULL;
-
+    
+    /* Check deference/argument boundaries */
     if (allocator == NULL || fit_block == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
+    
+    /* Assigning Initial Values for Variables */
     current = allocator->free_list;
 
+    /* Start Function Logic */
     while (current) 
     {
         if (current->free && current->size >= size + sizeof(block_header_t)) {
@@ -168,6 +180,7 @@ int MEM_findFirstFit(mem_allocator_t *allocator, size_t size, block_header_t **f
 
     ret = ENOMEM;
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -189,20 +202,24 @@ end_of_function:
  */
 int MEM_findNextFit(mem_allocator_t *allocator, size_t size, block_header_t **fit_block) 
 {
+    /* Definition of Function Variables */
     int ret                     = 0u;
 
     block_header_t *current     = NULL;
     block_header_t *start       = NULL;
 
+    /* Check deference/argument boundaries */
     if (allocator == NULL || fit_block == NULL)
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
+    
+    /* Assigning Initial Values for Variables */
     current     = allocator->last_allocated;
     start       = current;
 
+    /* Start Function Logic */
     do 
     {
         if (current->free && current->size >= size + sizeof(block_header_t)) 
@@ -219,6 +236,7 @@ int MEM_findNextFit(mem_allocator_t *allocator, size_t size, block_header_t **fi
 
     ret = ENOMEM;
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -241,19 +259,23 @@ end_of_function:
  */
 int MEM_findBestFit(mem_allocator_t *allocator, size_t size, block_header_t **best_fit) 
 {
+    /* Definition of Function Variables */
     int ret                 = 0u;
 
     block_header_t *current = NULL;
 
+    /* Check deference/argument boundaries */
     if (allocator == NULL || best_fit == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
+    
+    /* Assigning Initial Values for Variables */
     *best_fit   = NULL;
     current     = allocator->free_list;
 
+    /* Start Function Logic */
     while (current) 
     {
         if (current->free && current->size >= size + sizeof(block_header_t)) 
@@ -272,6 +294,7 @@ int MEM_findBestFit(mem_allocator_t *allocator, size_t size, block_header_t **be
         ret = ENOMEM;
     }
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -293,6 +316,7 @@ end_of_function:
  */
 int MEM_splitBlock(mem_allocator_t *allocator, block_header_t *block, size_t size) 
 {
+    /* Definition of Function Variables */
     int ret                     = 0u;
 
     size_t aligned_size         = 0u;
@@ -300,14 +324,17 @@ int MEM_splitBlock(mem_allocator_t *allocator, block_header_t *block, size_t siz
     uint8_t *new_block_addr     = NULL;
     block_header_t *new_block   = NULL;
 
+    /* Check deference/argument boundaries */
     if (allocator == NULL || block == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
+    
+    /* Assigning Initial Values for Variables */
     aligned_size = ALIGN(size);
 
+    /* Start Function Logic */
     if (block->size >= aligned_size + sizeof(block_header_t) + ARCH_ALIGNMENT) 
     {
         new_block_addr      = (uint8_t *)block + sizeof(block_header_t) + aligned_size;
@@ -345,6 +372,7 @@ int MEM_splitBlock(mem_allocator_t *allocator, block_header_t *block, size_t siz
         MEM_printd("MEM_splitBlock: Block at %p not split. Marked as allocated.\n", (void *)block);
     }
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -370,12 +398,15 @@ end_of_function:
  */
 void *MEM_allocatorMalloc(mem_allocator_t *allocator, size_t size, const char *file, int line, const char *var_name, allocation_strategy_t strategy) 
 {
+    /* Definition of Function Variables */
     int ret                 = 0u;
 
-    void *user_ptr          = NULL;
+    size_t aligned_size     = 0u
 
+    void *user_ptr          = NULL;
     block_header_t *block   = NULL;
 
+    /* Check deference/argument boundaries */
     if (allocator == NULL) 
     {
         errno       = EINVAL;
@@ -391,9 +422,11 @@ void *MEM_allocatorMalloc(mem_allocator_t *allocator, size_t size, const char *f
 
         goto end_of_function;
     }
+    
+    /* Assigning Initial Values for Variables */
+    aligned_size = ALIGN(size);
 
-    size_t aligned_size = ALIGN(size);
-
+    /* Start Function Logic */
     switch (strategy) 
     {
         case FIRST_FIT:
@@ -443,6 +476,7 @@ void *MEM_allocatorMalloc(mem_allocator_t *allocator, size_t size, const char *f
     MEM_printd("MEM_allocatorMalloc: Allocated %zu bytes for variable '%s' at %p (in %s:%d) using strategy %d.\n", 
                size, var_name, user_ptr, file, line, strategy);
 
+    /* Function Return */
 end_of_function:
     return user_ptr;
 }
@@ -463,18 +497,12 @@ end_of_function:
  */
 int MEM_validPointerCheck(mem_allocator_t *allocator, void *ptr) 
 {
+    /* Definition of Function Variables */
     int ret                 = 0u;
 
     block_header_t *block   = NULL;
 
-    uintptr_t heap_start    = 0u;
-    uintptr_t heap_end      = 0u;
-    uintptr_t user_ptr      = 0u;
-
-    heap_start  = (uintptr_t)(allocator->heap);
-    heap_end    = (heap_start + HEAP_SIZE);
-    user_ptr    = (uintptr_t)ptr;
-
+    /* Check deference/argument boundaries */
     if (allocator == NULL) 
     {
         errno = EINVAL;
@@ -488,7 +516,13 @@ int MEM_validPointerCheck(mem_allocator_t *allocator, void *ptr)
         ret = EINVAL;
         goto end_of_function;
     }
+    
+    /* Assigning Initial Values for Variables */
+    heap_start  = (uintptr_t)(allocator->heap);
+    heap_end    = (heap_start + HEAP_SIZE);
+    user_ptr    = (uintptr_t)ptr;
 
+    /* Start Function Logic */
     if (user_ptr < heap_start + sizeof(block_header_t) || user_ptr >= heap_end) 
     {
         errno = EINVAL;
@@ -520,6 +554,7 @@ int MEM_validPointerCheck(mem_allocator_t *allocator, void *ptr)
 
     ret = 0u;
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -540,16 +575,19 @@ end_of_function:
  */
 int MEM_mergeBlocks(mem_allocator_t *allocator, block_header_t *block) 
 {
+    /* Definition of Function Variables */
     int ret = 0u;
 
     block_header_t *next_block = NULL;
-
+    
+    /* Check deference/argument boundaries */
     if (allocator == NULL || block == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
 
+    /* Start Function Logic */
     next_block = (block_header_t *)((uint8_t *)block + block->size);
     if ((uint8_t *)next_block < allocator->heap + HEAP_SIZE && next_block->free) 
     {
@@ -583,6 +621,7 @@ int MEM_mergeBlocks(mem_allocator_t *allocator, block_header_t *block)
     block->line     = 0u;
     block->var_name = NULL;
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -606,16 +645,19 @@ end_of_function:
  */
 int MEM_allocatorFree(mem_allocator_t *allocator, void *ptr, const char *file, int line, const char *var_name) 
 {
+    /* Definition of Function Variables */
     int ret                 = 0u;
 
     block_header_t *block   = NULL;
-
+    
+    /* Check deference/argument boundaries */
     if (allocator == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
 
+    /* Start Function Logic */
     ret = MEM_validPointerCheck(allocator, ptr);
     if (ret != 0u) 
     {
@@ -649,6 +691,7 @@ int MEM_allocatorFree(mem_allocator_t *allocator, void *ptr, const char *file, i
         goto end_of_function;
     }
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
@@ -668,24 +711,27 @@ end_of_function:
  */
 int MEM_allocatorPrintAll(mem_allocator_t *allocator) 
 {
+    /* Definition of Function Variables */
     int ret = 0u;
 
     uint8_t *current = NULL;
     uint8_t *heap_end = NULL;
-
     block_header_t *block = NULL;
 
+    /* Check deference/argument boundaries */
     if (allocator == NULL) 
     {
         ret = EINVAL;
         goto end_of_function;
     }
-
-    printf("Allocation Table:\n");
-    printf("Address\t\tSize\t\tFree\t\tFile:Line\n");
-
+    
+    /* Assigning Initial Values for Variables */
     current     = allocator->heap;
     heap_end    = allocator->heap + HEAP_SIZE;
+    
+    /* Start Function Logic */
+    printf("Allocation Table:\n");
+    printf("Address\t\tSize\t\tFree\t\tFile:Line\n");
 
     while (current < heap_end) 
     {
@@ -701,6 +747,7 @@ int MEM_allocatorPrintAll(mem_allocator_t *allocator)
         current += block->size;
     }
 
+    /* Function Return */
 end_of_function:
     return ret;
 }
