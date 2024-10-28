@@ -164,7 +164,7 @@ typedef struct mem_allocator
 } mem_allocator_t;
 
 /* =================================
- * PUBLIC DATA FUNCTION PROTOTYPES *
+ *   PUBLIC  FUNCTION PROTOTYPES   *
  * ================================*/
 
 /**
